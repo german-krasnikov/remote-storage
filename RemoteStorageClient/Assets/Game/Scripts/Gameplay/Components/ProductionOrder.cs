@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SampleGame.Gameplay
 {
     //Can be extended
-    public sealed class ProductionOrder : MonoBehaviour
+    public sealed class ProductionOrder : MonoBehaviour, ISerializedComponent
     {
         ///Variable
         [SerializeField]
@@ -15,6 +15,15 @@ namespace SampleGame.Gameplay
         {
             get { return _queue; }
             set { _queue = new List<EntityConfig>(value); }
+        }
+        public void Save(Dictionary<string, string> data)
+        {
+            
+        }
+
+        public void Load(Dictionary<string, string> data)
+        {
+            
         }
     }
 }
