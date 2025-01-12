@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SampleGame.Common;
 using UnityEngine;
@@ -32,7 +33,7 @@ namespace SampleGame.Gameplay
         public void Load(Dictionary<string, string> data)
         {
             Current = int.Parse(data[CurrentKey]);
-            Type = (ResourceType)int.Parse(data[TypeKey]);
+            Enum.TryParse(data[TypeKey], out TeamType Type);
             Capacity = int.Parse(data[CapacityKey]);
         }
     }

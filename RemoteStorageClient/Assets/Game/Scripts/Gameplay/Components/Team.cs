@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SampleGame.Common;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace SampleGame.Gameplay
 
         public void Load(Dictionary<string, string> data)
         {
-            Type = (TeamType)int.Parse(data[TypeKey]);
+            Enum.TryParse(data[TypeKey], out TeamType Type);
         }
     }
 }

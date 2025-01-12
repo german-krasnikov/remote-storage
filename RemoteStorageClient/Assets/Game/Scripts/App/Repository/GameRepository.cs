@@ -22,7 +22,7 @@ namespace SampleGame.App
         public Dictionary<string, string> GetState()
         {
             var data = PlayerPrefs.GetString(PrefValue);
-            if (data == null)
+            if (string.IsNullOrEmpty(data))
                 return new Dictionary<string, string>();
 
             string json = AesEncryptor.Decrypt(data, _aesPassword, _aesSalt);
@@ -37,7 +37,7 @@ namespace SampleGame.App
 
         public void SetState(Dictionary<string, string> gameState)
         {
-            string json = JsonConvert.SerializeObject(gameState);
+            var json = JsonConvert.SerializeObject(gameState);
             var encryptedBytes = AesEncryptor.Encrypt(json, _aesPassword, _aesSalt);
             PlayerPrefs.SetString(PrefValue, encryptedBytes);
             Debug.Log($"Save state: {json}");
