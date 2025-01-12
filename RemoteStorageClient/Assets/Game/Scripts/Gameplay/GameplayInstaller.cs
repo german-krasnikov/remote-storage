@@ -1,4 +1,5 @@
 using Modules.Entities;
+using SampleGame.App;
 using UnityEngine;
 using Zenject;
 
