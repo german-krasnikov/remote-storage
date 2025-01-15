@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using SampleGame.Gameplay;
 using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 using Object = UnityEngine.Object;
 
 namespace SampleGame.App
@@ -13,9 +14,11 @@ namespace SampleGame.App
     {
         private readonly IGameRepository _repository;
         private readonly EntityWorld _entityWorld;
+        private readonly DiContainer _container;
 
-        public GameSaveLoader(IGameRepository repository, EntityWorld entityWorld)
+        public GameSaveLoader(DiContainer container, IGameRepository repository, EntityWorld entityWorld)
         {
+            _container = container;
             _repository = repository;
             _entityWorld = entityWorld;
         }
@@ -46,7 +49,7 @@ namespace SampleGame.App
         public void Load()
         {
             _entityWorld.DestroyAll();
-            Dictionary<string, string> gameState = _repository.GetState();
+            var gameState = _repository.GetState();
 
             foreach (var pair in gameState)
             {
@@ -57,6 +60,7 @@ namespace SampleGame.App
             {
                 var entityId = GetEntityId(pair.Key);
                 var entity = _entityWorld.Get(entityId);
+                _container.InjectGameObject(entity.gameObject);
                 var entityState = JsonConvert.DeserializeObject<Dictionary<string, object>>(pair.Value);
 
                 foreach (var component in entity.GetComponents<ISerializedComponent>())
@@ -77,7 +81,6 @@ namespace SampleGame.App
             var parts = state.Split(new[] { "_" }, StringSplitOptions.None);
             var id = int.Parse(parts[0]);
             var name = parts[1];
-            //var type = (EntityType)int.Parse(parts[2]);
             return _entityWorld.Spawn(name, Vector3.zero, Quaternion.identity, id);
         }
 
