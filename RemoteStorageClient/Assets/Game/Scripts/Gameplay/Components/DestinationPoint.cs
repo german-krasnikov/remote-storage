@@ -14,6 +14,6 @@ namespace SampleGame.Gameplay
 
         public void Save(Dictionary<string, string> data) => data[ValueKey] = Value.Vector3ToString();
 
-        public void Load(Dictionary<string, string> data) => Value = data[ValueKey].Vector3FromString();
+        public void Load(Dictionary<string, string> data) => Value = data[ValueKey].StringToVector3();
     }
 }

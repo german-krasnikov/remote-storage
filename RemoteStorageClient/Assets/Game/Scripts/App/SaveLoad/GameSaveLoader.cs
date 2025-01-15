@@ -40,6 +40,7 @@ namespace SampleGame.App
                     entityState.Add(component.GetType().Name, JsonConvert.SerializeObject(componentState));
                 }
 
+                entity.gameObject.SaveTransform(entityState);
                 gameState.Add(GetEntityState(entity), JsonConvert.SerializeObject(entityState));
             }
 
@@ -62,6 +63,7 @@ namespace SampleGame.App
                 var entity = _entityWorld.Get(entityId);
                 _container.InjectGameObject(entity.gameObject);
                 var entityState = JsonConvert.DeserializeObject<Dictionary<string, object>>(pair.Value);
+                entity.gameObject.LoadTransform(entityState);
 
                 foreach (var component in entity.GetComponents<ISerializedComponent>())
                 {
