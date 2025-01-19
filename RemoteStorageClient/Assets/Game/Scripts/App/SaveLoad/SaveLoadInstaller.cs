@@ -9,9 +9,6 @@ namespace SampleGame.App
     )]
     public sealed class SaveLoadInstaller : ScriptableObjectInstaller
     {
-        [SerializeField]
-        private float _savePeriod = 5;
-        
         public override void InstallBindings()
         {
             this.Container.Bind<GameSaveLoader>().AsSingle();

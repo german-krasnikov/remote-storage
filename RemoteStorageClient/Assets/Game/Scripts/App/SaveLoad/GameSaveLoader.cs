@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Modules.Entities;
 using Newtonsoft.Json;
 using SampleGame.Gameplay;
-using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
-using Object = UnityEngine.Object;
 
 namespace SampleGame.App
 {
@@ -15,15 +14,21 @@ namespace SampleGame.App
         private readonly IGameRepository _repository;
         private readonly EntityWorld _entityWorld;
         private readonly DiContainer _container;
+        private readonly RemoteGameRepository _remoteGameRepository;
 
-        public GameSaveLoader(DiContainer container, IGameRepository repository, EntityWorld entityWorld)
+        public GameSaveLoader(
+            DiContainer container,
+            IGameRepository repository,
+            RemoteGameRepository remoteGameRepository,
+            EntityWorld entityWorld)
         {
+            _remoteGameRepository = remoteGameRepository;
             _container = container;
             _repository = repository;
             _entityWorld = entityWorld;
         }
 
-        public void Save()
+        public async UniTask<bool> Save(int version)
         {
             var gameState = new Dictionary<string, string>();
             var entities = _entityWorld.GetAll();
@@ -44,13 +49,20 @@ namespace SampleGame.App
                 gameState.Add(GetEntityState(entity), JsonConvert.SerializeObject(entityState));
             }
 
-            _repository.SetState(gameState);
+            _repository.SetState(version, gameState);
+            return await _remoteGameRepository.SaveState(version, _repository.EncryptToString(gameState));
         }
 
-        public void Load()
+        public async UniTask<bool> Load(int version)
         {
             _entityWorld.DestroyAll();
-            var gameState = _repository.GetState();
+            var gameState = _repository.GetState(out var localVersion);
+            var remoteGameState = await _remoteGameRepository.LoadState(version);
+
+            if (remoteGameState != null && localVersion <= version)
+            {
+                gameState = _repository.DecryptToString(remoteGameState);
+            }
 
             foreach (var pair in gameState)
             {
@@ -74,6 +86,8 @@ namespace SampleGame.App
                     }
                 }
             }
+
+            return true;
         }
 
         private string GetEntityState(Entity entity) => $"{entity.Id}_{entity.Name}_{entity.Type}";

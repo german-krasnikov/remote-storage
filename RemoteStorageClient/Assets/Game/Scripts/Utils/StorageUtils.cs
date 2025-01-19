@@ -5,7 +5,7 @@ namespace Game.Scripts.Utils
 {
     public static class StorageUtils
     {
-        public static string Vector3ToString(this Vector3 v) => $"{v.x:0.00},{v.y:0.00},{v.z:0.00}";
+        public static string Vector3ToString(this Vector3 v) => $"{v.x:0.000},{v.y:0.000},{v.z:0.000}";
 
         public static Vector3 StringToVector3(this string s)
         {

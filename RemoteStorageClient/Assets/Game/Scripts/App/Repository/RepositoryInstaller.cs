@@ -17,6 +17,7 @@ namespace SampleGame.App
 
         public override void InstallBindings()
         {
+            Container.Bind<RemoteGameRepository>().AsSingle();
             Container.BindInterfacesTo<GameRepository>().AsSingle().WithArguments(_aesPassword, _aesSalt);
         }
     }
