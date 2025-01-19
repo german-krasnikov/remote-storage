@@ -18,9 +18,8 @@ namespace Game.Gameplay
 
         private async UniTask SaveAsync(Action<bool, int> callback)
         {
-            var version = 1;
-            var result = await _gameSaveLoader.Save(version);
-            callback.Invoke(result, version);
+            var result = await _gameSaveLoader.Save();
+            callback.Invoke(result.Item1, result.Item2);
         }
 
         private async UniTask LoadAsync(string versionText, Action<bool, int> callback)

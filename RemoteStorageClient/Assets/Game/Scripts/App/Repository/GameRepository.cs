@@ -20,15 +20,17 @@ namespace SampleGame.App
 
         public Dictionary<string, string> GetState(out int version)
         {
-            version = 0;
-            if (!int.TryParse(PlayerPrefs.GetString(VersionKey), out version)) return null;
+            version = GetVersion();
+            if (version == 0) return null;
             return DecryptToString(PlayerPrefs.GetString(PrefValue));
         }
 
-        public void SetState(int version, Dictionary<string, string> gameState)
+        public int SetState(Dictionary<string, string> gameState)
         {
+            var version = GetVersion() + 1;
             PlayerPrefs.SetString(VersionKey, version.ToString());
             PlayerPrefs.SetString(PrefValue, EncryptToString(gameState));
+            return version;
         }
 
         public string EncryptToString(Dictionary<string, string> gameState)
@@ -51,5 +53,7 @@ namespace SampleGame.App
 
             return result;
         }
+
+        private int GetVersion() => int.TryParse(PlayerPrefs.GetString(VersionKey), out var version) ? version : 0;
     }
 }

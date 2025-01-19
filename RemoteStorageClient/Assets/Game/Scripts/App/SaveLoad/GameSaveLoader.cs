@@ -28,7 +28,7 @@ namespace SampleGame.App
             _entityWorld = entityWorld;
         }
 
-        public async UniTask<bool> Save(int version)
+        public async UniTask<(bool result, int version)> Save()
         {
             var gameState = new Dictionary<string, string>();
             var entities = _entityWorld.GetAll();
@@ -49,8 +49,9 @@ namespace SampleGame.App
                 gameState.Add(GetEntityState(entity), JsonConvert.SerializeObject(entityState));
             }
 
-            _repository.SetState(version, gameState);
-            return await _remoteGameRepository.SaveState(version, _repository.EncryptToString(gameState));
+            var version = _repository.SetState(gameState);
+            var result = await _remoteGameRepository.SaveState(version, _repository.EncryptToString(gameState));
+            return (result, version);
         }
 
         public async UniTask<bool> Load(int version)
